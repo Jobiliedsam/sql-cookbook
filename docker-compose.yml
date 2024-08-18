@@ -1,0 +1,17 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      SA_PASSWORD: "SqlServer2019!"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Standard"
+    ports:
+      - "1433:1433"
+  mssqltools:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      - sqlserver
+    volumes:
+      - ./sql-cookbook-create-database.sql:/tmp/sql-cookbook-create-database.sql
+      - ./sql-cookbook-aditional-tables.sql:/tmp/sql-cookbook-aditional-tables.sql
+    command: /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P SqlServer2019! -d master -i /tmp/sql-cookbook-create-database.sql /tmp/sql-cookbook-aditional-tables.sql 
